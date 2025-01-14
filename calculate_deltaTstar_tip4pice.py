@@ -13,6 +13,7 @@ Delta_H_m = 5.60e3  # J/mol
 l_PI = 2  # nm
 l_box = 4.6  # nm
 alpha_list = [0.0, 0.25, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0]
+critical_Delta_T_sim = {0.5: 90, 0.6: 85, 0.7: 75, 0.75: 45, 0.8: 10, 0.9: 0, 1.0: 0}
 
 
 def read_k():
@@ -69,7 +70,7 @@ def calc_G(r, k_eff, T):
     return G
 
 
-def calculate_deltaTstar(k_eff, n=30):
+def calculate_deltaTstar(k_eff, n=20):
     if k_eff > 0.99:
         return 0
     r = np.logspace(-11, -7, 1000)
@@ -156,19 +157,27 @@ def main():
     ax.set_title(r"Critical Supercooling $\Delta T^*$")
     ax.set_xlabel(r"Polarity $\alpha$")
     ax.set_ylabel(r"$\Delta T^*\ ({\rm K})$")
-    ax.plot(alpha_list, data_flat, "o-", label=fr"flat")
     for h_lambda in [0, 1]:
         ax.plot(alpha_list, data[h_lambda], "o-", label=fr"$h_\lambda = {h_lambda}$")
-    ax.plot([0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0], [90, 85, 75, 35, 10, 0, 0], "o-", label=fr"$h_\lambda: 0 \to 1$")
+    # ax.plot([], [])
+    # ax.plot([], [])
+    ax.plot([0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0], [90, 85, 75, 45, 10, 0, 0], "o-", label=fr"$h_\lambda: 0 \to 1$")
+
+    # critical_T_x = [0.0, 0.25, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0]
+    # critical_T_y = data[0][:5] + [45, 10] + data[1][7:]
+    critical_T_x = [0.75, 0.8, 0.9, 1.0]
+    critical_T_y = [45, 10] + data[1][7:]
+    ax.plot(critical_T_x, critical_T_y, "o-", label=r"$\Delta T^*$")
+    ax.plot(alpha_list, data_flat, "o-", label=fr"flat")
     ax.legend()
-    plt.savefig(f"figure/delta_T_tip4p_ice.png", bbox_inches="tight", pad_inches=0.1)
+    plt.savefig(f"figure/delta_T_tip4p_ice_compare.png", bbox_inches="tight", pad_inches=0.1)
     plt.close(fig)
 
 
 if __name__ == "__main__":
     # print(calc_H_m(230))
-    main_plot_delta_mu()
+    # main_plot_delta_mu()
     # main_plot_alpha_to_k()
     # print(calc_Delta_mu(T_m - 65))
     # main_calc_plot_Delta_T_star_k()
-    # main()
+    main()
